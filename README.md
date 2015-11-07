@@ -11,3 +11,5 @@ If you still want to use this plugin, follow the instructions in the [Textual pl
 ## To-Do
 - Automatically send the necessary CAP requests to Twitch's IRC server on-connect
 - Render emoticons in the plugin itself (eliminating the need for the companion JS)
+- Support channel-specific subscriber icons/actual Turbo icon
+- Support Twitch mod status (`user-type`)
