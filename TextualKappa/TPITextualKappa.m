@@ -78,6 +78,21 @@
 
         }
 
+        // Is this user a moderator or Twitch staff?
+        if ((messageTags[@"user-type"] != nil)) {
+
+            if ([messageTags[@"user-type"]  isEqual:@"mod"]) {
+                nickname = [NSString stringWithFormat:@"⚔%@", nickname];
+            } else if ([messageTags[@"user-type"]  isEqual:@"global-mod"]) {
+                nickname = [NSString stringWithFormat:@"🔨%@", nickname];
+            } else if ([messageTags[@"user-type"]  isEqual:@"admin"]) {
+                nickname = [NSString stringWithFormat:@"🔰%@", nickname];
+            } else if ([messageTags[@"user-type"]  isEqual:@"staff"]) {
+                nickname = [NSString stringWithFormat:@"🔧%@", nickname];
+            }
+            
+        }
+
         // Emoticons!
         if ((messageTags[@"emotes"] != nil) && ([input params][1] != nil)) {
 
