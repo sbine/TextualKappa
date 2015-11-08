@@ -6,10 +6,10 @@ TextualKappa is a Twitch.tv chat plugin for the Textual IRC client that adds sup
 ## Notes
 This plugin is in the early stages of development. Currently, it can only be built with the [latest Textual source](https://github.com/Codeux-Software/Textual) -- building on older versions will cause Textual to crash.
 
-If you still want to use this plugin, follow the instructions in the [Textual plugin development guide](https://www.codeux.com/textual/help/private/wiki-content/Writing-Plugins%3A-Basic-Tutorial/document.pdf) but replace all paths to Textual with your local build. Then, replace your Textual theme's scripts.js with the copy provided in the 'Theme' folder.
+If you still want to use this plugin, follow the instructions in the [Textual plugin development guide](https://www.codeux.com/textual/help/private/wiki-content/Writing-Plugins%3A-Basic-Tutorial/document.pdf) but replace all paths to Textual with your local build.
 
 ## To-Do
 - Automatically send the necessary CAP requests to Twitch's IRC server on-connect
-- Render emoticons in the plugin itself (eliminating the need for the companion JS)
+- ~~Render emoticons in the plugin itself (eliminating the need for the companion JS)~~ Used [xlexi's method](https://github.com/xlexi/Textual-Inline-Media) of automatically injecting CSS/JS
 - Support channel-specific subscriber icons/actual Turbo icon
 - Support Twitch mod status (`user-type`)

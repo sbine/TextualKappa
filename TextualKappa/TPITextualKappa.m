@@ -14,13 +14,19 @@
 
 @implementation TPITextualKappa
 
-/*- (void)pluginLoadedIntoMemory
- {
- // TODO: automatically send Twitch.tv CAP requests
- // quote CAP REQ :twitch.tv/tags
- // quote CAP REQ :twitch.tv/membership
- // quote CAP REQ :twitch.tv/commands
- }*/
+- (void)pluginLoadedIntoMemory
+{
+    // TODO: automatically send Twitch.tv CAP requests
+    // quote CAP REQ :twitch.tv/tags
+    // quote CAP REQ :twitch.tv/membership
+    // quote CAP REQ :twitch.tv/commands
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self
+               selector:@selector(logControllerViewFinishedLoading:)
+                   name:TVCLogControllerViewFinishedLoadingNotification
+                 object:nil];
+}
 
 - (IRCMessage *)interceptServerInput:(IRCMessage *)input for:(IRCClient *)client
 {
@@ -88,6 +94,36 @@
     return input;
 }
 
+- (void) logControllerViewFinishedLoading:(NSNotification *)notification
+{
+
+    [self performBlockOnMainThread:^{
+        TVCLogController *controller = [notification object];
+
+        if (controller != nil) {
+            DOMDocument *document = [[controller webView] mainFrameDocument];
+            DOMNode *head = [[document getElementsByTagName:@"head"] item:0];
+            NSBundle *mainBundle = [NSBundle bundleForClass:[self class]];
+
+            NSString *cssPath = [mainBundle pathForResource:@"style" ofType:@"css" inDirectory:@"Resources"];
+            NSString *jsPath = [mainBundle pathForResource:@"script" ofType:@"js" inDirectory:@"Resources"];
+
+            DOMElement *cssInclude = [document createElement:@"link"];
+            [cssInclude setAttribute:@"rel" value:@"stylesheet"];
+            [cssInclude setAttribute:@"type" value:@"text/css"];
+            [cssInclude setAttribute:@"href" value:cssPath];
+
+            DOMElement *jsInclude = [document createElement:@"script"];
+            [jsInclude setAttribute:@"type" value:@"application/ecmascript"];
+            [jsInclude setAttribute:@"src" value:jsPath];
+
+            [head appendChild:cssInclude];
+            [head appendChild:jsInclude];
+
+        }
+    }];
+}
+
 - (NSString *)replaceEmoticonsInString:(NSString *)messageString withEmoteIndices:(NSString *)emoteIndices
 {
     NSMutableString *replacedString = [messageString mutableCopy];
@@ -146,7 +182,7 @@
         return result;
     }];
 
-    // Loop over emoticon indices and perform in-place replacements
+    // Loop over emoticon index and perform in-place replacements
     for (NSString *emoticonIndex in sortedKeys) {
         NSString *emoticonId = emoticonRangeDictionary[emoticonIndex];
 
