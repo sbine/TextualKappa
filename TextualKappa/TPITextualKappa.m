@@ -221,6 +221,12 @@
 
     NSArray *emoticonDirectiveArray = [NSArray new];
     NSMutableDictionary *emoticonRangeDictionary = [NSMutableDictionary new];
+    NSInteger offset = 0;
+
+    NSRange positionOfAction = [string rangeOfString:@"ACTION"];
+    if (positionOfAction.location == 1) {
+        offset = 8;
+    }
 
     // Distinct emoticon directives are separated by "/"
     emoticonDirectiveArray = [emoteIndices componentsSeparatedByString:@"/"];
@@ -242,8 +248,8 @@
                 NSRange positionOfDash = [emoticonRange rangeOfString:@"-"];
 
                 if (positionOfDash.location != NSNotFound) {
-                    NSInteger startIndex = [[emoticonRange substringToIndex:positionOfDash.location] integerValue];
-                    NSInteger endIndex = [[emoticonRange substringAfterIndex:positionOfDash.location] integerValue];
+                    NSInteger startIndex = [[emoticonRange substringToIndex:positionOfDash.location] integerValue] + offset;
+                    NSInteger endIndex = [[emoticonRange substringAfterIndex:positionOfDash.location] integerValue] + offset;
                     NSString *rangeAsString = [NSString stringWithFormat:@"{%li, %li}", startIndex, (endIndex - startIndex) + 1];
 
                     // Store the emoticon ID keyed by a NSRange string representation of its location in the message
