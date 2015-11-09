@@ -16,6 +16,9 @@
 
 @implementation TPITextualKappa
 
+#pragma mark -
+#pragma mark Plugin API Hooks
+
 - (void)pluginLoadedIntoMemory
 {
     [RZNotificationCenter() addObserver:self
@@ -49,6 +52,9 @@
 
     return input;
 }
+
+#pragma mark -
+#pragma mark Twitch PRIVMSG Parsing
 
 - (IRCMessage *)interceptPrivmsgsKappaAddon:(IRCMessage *)input senderInfo:(IRCPrefix *)senderInfo client:(IRCClient *)client
 {
@@ -106,7 +112,8 @@
         if ((messageTags[@"emotes"] != nil) && ([input params][1] != nil)) {
 
             NSString *messageString = [input params][1];
-            messageString = [self replaceEmoticonsInString:messageString withEmoteIndices:messageTags[@"emotes"]];
+            NSDictionary *emoteDirectives = [self getEmoticonDirectivesFromString:messageString withEmoteIndices:messageTags[@"emotes"]];
+            messageString = [self replaceEmoticonsInString:messageString withEmoteDirectives:emoteDirectives];
 
             mutableParams[1] = messageString;
         }
@@ -117,6 +124,9 @@
 
     return input;
 }
+
+#pragma mark -
+#pragma mark Resource Injection
 
 - (void)logControllerViewFinishedLoading:(NSNotification *)notification
 {
@@ -148,6 +158,9 @@
         }
     }];
 }
+
+#pragma mark -
+#pragma mark Key/Value Observation
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -196,11 +209,11 @@
     }
 }
 
+#pragma mark -
+#pragma mark String Replacement
 
-- (NSString *)replaceEmoticonsInString:(NSString *)messageString withEmoteIndices:(NSString *)emoteIndices
+- (NSDictionary *)getEmoticonDirectivesFromString:(NSString *)string withEmoteIndices:(NSString *)emoteIndices
 {
-    NSMutableString *replacedString = [messageString mutableCopy];
-
     // Sample emoticon strings:
     // "12576:0-11,13-24,26-37,39-50";
     // "28087:0-6/68856:8-14/88:16-23";
@@ -240,8 +253,15 @@
         }
     }
 
+    return emoticonRangeDictionary;
+}
+
+- (NSString *)replaceEmoticonsInString:(NSString *)messageString withEmoteDirectives:(NSDictionary *)emoteDirectives
+{
+    NSMutableString *replacedString = [messageString mutableCopy];
+
     // Sort the emoticon dictionary in descending index order so in-place replacements don't invalidate subsequent indices
-    NSArray *keys = [emoticonRangeDictionary allKeys];
+    NSArray *keys = [emoteDirectives allKeys];
     NSArray *sortedKeys = [keys sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
         NSRange first = NSRangeFromString(a);
         NSRange second = NSRangeFromString(b);
@@ -257,7 +277,7 @@
 
     // Loop over emoticon index and perform in-place replacements
     for (NSString *emoticonIndex in sortedKeys) {
-        NSString *emoticonId = emoticonRangeDictionary[emoticonIndex];
+        NSString *emoticonId = emoteDirectives[emoticonIndex];
 
         // TODO: remove the need for placeholder :twitch_<emote>:
         replacedString = [[replacedString stringByReplacingCharactersInRange:NSRangeFromString(emoticonIndex) withString:[NSString stringWithFormat:@":twitch_%@:", emoticonId]] mutableCopy];
