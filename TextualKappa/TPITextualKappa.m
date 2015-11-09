@@ -81,9 +81,10 @@
         // Is this user a moderator or Twitch staff?
         if ((messageTags[@"user-type"] != nil)) {
 
+            // Use standard emoji as placeholders
             if ([messageTags[@"user-type"]  isEqual:@"mod"]) {
                 nickname = [NSString stringWithFormat:@"⚔%@", nickname];
-            } else if ([messageTags[@"user-type"]  isEqual:@"global-mod"]) {
+            } else if ([messageTags[@"user-type"]  isEqual:@"global_mod"]) {
                 nickname = [NSString stringWithFormat:@"🔨%@", nickname];
             } else if ([messageTags[@"user-type"]  isEqual:@"admin"]) {
                 nickname = [NSString stringWithFormat:@"🔰%@", nickname];
