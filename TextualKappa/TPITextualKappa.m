@@ -10,22 +10,30 @@
 
 @interface TPITextualKappa ()
 
+@property (nonatomic, strong) NSMutableArray *observedClients;
+
 @end
 
 @implementation TPITextualKappa
 
 - (void)pluginLoadedIntoMemory
 {
-    // TODO: automatically send Twitch.tv CAP requests
-    // quote CAP REQ :twitch.tv/tags
-    // quote CAP REQ :twitch.tv/membership
-    // quote CAP REQ :twitch.tv/commands
+    [RZNotificationCenter() addObserver:self
+                               selector:@selector(logControllerViewFinishedLoading:)
+                                   name:TVCLogControllerViewFinishedLoadingNotification
+                                 object:nil];
 
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self
-               selector:@selector(logControllerViewFinishedLoading:)
-                   name:TVCLogControllerViewFinishedLoadingNotification
-                 object:nil];
+    [RZNotificationCenter() addObserver:self
+                               selector:@selector(addClientObservers)
+                                   name:IRCWorldClientListWasModifiedNotification
+                                 object:nil];
+
+    [self addClientObservers];
+}
+
+- (void)pluginWillBeUnloadedFromMemory
+{
+    [RZNotificationCenter() removeObserver:self];
 }
 
 - (IRCMessage *)interceptServerInput:(IRCMessage *)input for:(IRCClient *)client
@@ -110,7 +118,7 @@
     return input;
 }
 
-- (void) logControllerViewFinishedLoading:(NSNotification *)notification
+- (void)logControllerViewFinishedLoading:(NSNotification *)notification
 {
 
     [self performBlockOnMainThread:^{
@@ -133,12 +141,61 @@
             [jsInclude setAttribute:@"type" value:@"application/ecmascript"];
             [jsInclude setAttribute:@"src" value:jsPath];
 
+            // Inject plugin's CSS and JS into each view
             [head appendChild:cssInclude];
             [head appendChild:jsInclude];
 
         }
     }];
 }
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    // Verify this observer is for the IRCClient 'isLoggedIn' property
+    if ([object class] == [IRCClient class] && [keyPath isEqualToString:@"isLoggedIn"]) {
+        IRCClient *client = object;
+        NSString *serverAddress = [[client config] serverAddress];
+
+        // Check if we are connected to a twitch.tv server
+        if ([[serverAddress lowercaseString] hasSuffix:@"twitch.tv"] && [client isConnected] == YES) {
+            // Send Twitch vendor-specific CAP requests
+            [object send:IRCPrivateCommandIndex("cap"), @"REQ", @"twitch.tv/tags", nil];
+            [object send:IRCPrivateCommandIndex("cap"), @"REQ", @"twitch.tv/membership", nil];
+            [object send:IRCPrivateCommandIndex("cap"), @"REQ", @"twitch.tv/commands", nil];
+        }
+    }
+}
+
+- (void)addClientObservers
+{
+    @synchronized(self.observedClients) {
+
+        NSArray *clientList = [worldController() clientList];
+
+        for (IRCClient *client in self.observedClients) {
+            if ([clientList containsObject:client] == NO) {
+                [client removeObserver:self forKeyPath:@"isLoggedIn"];
+            }
+        }
+
+        if (self.observedClients == nil) {
+            self.observedClients = [NSMutableArray array];
+        }
+
+        for (IRCClient *client in clientList) {
+            if ([self.observedClients containsObject:client] == NO) {
+                [self.observedClients addObject:client];
+
+                // Add observers for each IRCClient's 'isLoggedIn' property
+                [client addObserver:self
+                         forKeyPath:@"isLoggedIn"
+                            options:NSKeyValueObservingOptionNew
+                            context:NULL];
+            }
+        }
+    }
+}
+
 
 - (NSString *)replaceEmoticonsInString:(NSString *)messageString withEmoteIndices:(NSString *)emoteIndices
 {
