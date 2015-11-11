@@ -141,6 +141,7 @@
 
             NSString *cssPath = [mainBundle pathForResource:@"style" ofType:@"css" inDirectory:@"Resources"];
             NSString *jsPath = [mainBundle pathForResource:@"script" ofType:@"js" inDirectory:@"Resources"];
+            NSString *jsPostLoadPath = [mainBundle pathForResource:@"script-postload" ofType:@"js" inDirectory:@"Resources"];
 
             DOMElement *cssInclude = [document createElement:@"link"];
             [cssInclude setAttribute:@"rel" value:@"stylesheet"];
@@ -155,6 +156,20 @@
             [head appendChild:cssInclude];
             [head appendChild:jsInclude];
 
+            // Mark Twitch channels with a data attribute
+            if ([self isTwitchClient:[controller associatedClient]]) {
+                DOMNode *bodyNode = [[document getElementsByTagName:@"body"] item:0];
+                if ([bodyNode isKindOfClass:[DOMElement class]]) {
+                    DOMElement *body = (DOMElement *) bodyNode;
+                    [body setAttribute:@"data-twitch-channel" value:@"1"];
+
+                    DOMElement *scriptPostLoadInclude = [document createElement:@"script"];
+                    [scriptPostLoadInclude setAttribute:@"type" value:@"application/ecmascript"];
+                    [scriptPostLoadInclude setAttribute:@"src" value:jsPostLoadPath];
+
+                    [body appendChild:scriptPostLoadInclude];
+                }
+            }
         }
     }];
 }

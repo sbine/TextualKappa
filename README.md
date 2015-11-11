@@ -11,10 +11,12 @@ If you still want to use this plugin, follow the instructions in the [Textual pl
 ## To-Do
 - ~~Automatically send the necessary CAP requests to Twitch's IRC server on-connect~~
 - ~~Render emoticons in the plugin itself (eliminating the need for the companion JS)~~ Used [xlexi's method](https://github.com/xlexi/Textual-Inline-Media) of automatically injecting CSS/JS
-- Support channel-specific subscriber icons
+- ~~Support channel-specific subscriber icons~~
 - ~~Support Twitch mod status (`user-type`)~~
 - ~~Support emotes sent in actions~~
 - Support emotes sent in own messages
+- Support broadcaster icon
 - Respect `color` preference for display name
+- Handle deleted messages
 - Add preferences to support enabling/disabling the plugin
 - Add support for [other Twitch.tv IRCv3 features](https://github.com/justintv/Twitch-API/blob/master/IRC.md)
