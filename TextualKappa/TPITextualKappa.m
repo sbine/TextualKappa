@@ -167,10 +167,10 @@
     // Verify this observer is for the IRCClient 'isLoggedIn' property
     if ([object class] == [IRCClient class] && [keyPath isEqualToString:@"isLoggedIn"]) {
         IRCClient *client = object;
-        NSString *serverAddress = [[client config] serverAddress];
 
         // Check if we are connected to a twitch.tv server
-        if ([[serverAddress lowercaseString] hasSuffix:@"twitch.tv"] && [client isConnected] == YES) {
+        if ([self isTwitchClient:client] && [client isConnected] == YES) {
+
             // Send Twitch vendor-specific CAP requests
             [object send:IRCPrivateCommandIndex("cap"), @"REQ", @"twitch.tv/tags", nil];
             [object send:IRCPrivateCommandIndex("cap"), @"REQ", @"twitch.tv/membership", nil];
@@ -196,14 +196,19 @@
         }
 
         for (IRCClient *client in clientList) {
-            if ([self.observedClients containsObject:client] == NO) {
-                [self.observedClients addObject:client];
 
-                // Add observers for each IRCClient's 'isLoggedIn' property
-                [client addObserver:self
-                         forKeyPath:@"isLoggedIn"
-                            options:NSKeyValueObservingOptionNew
-                            context:NULL];
+            // Only add observers for twitch.tv servers
+            // TODO: handle proxies
+            if ([self isTwitchClient:client]) {
+                if ([self.observedClients containsObject:client] == NO) {
+                    [self.observedClients addObject:client];
+
+                    // Add observers for each IRCClient's 'isLoggedIn' property
+                    [client addObserver:self
+                             forKeyPath:@"isLoggedIn"
+                                options:NSKeyValueObservingOptionNew
+                                context:NULL];
+                }
             }
         }
     }
@@ -223,6 +228,7 @@
     NSMutableDictionary *emoticonRangeDictionary = [NSMutableDictionary new];
     NSInteger offset = 0;
 
+    // Is this PRIVMSG an ACTION? If so, add 8 to all indices
     NSRange positionOfAction = [string rangeOfString:@"ACTION"];
     if (positionOfAction.location == 1) {
         offset = 8;
@@ -290,6 +296,21 @@
     }
 
     return replacedString;
+}
+
+#pragma mark -
+#pragma mark Helper Functions
+
+- (BOOL)isTwitchClient:(IRCClient *)client
+{
+    NSString *serverAddress = [[client config] serverAddress];
+
+    // Check if we are connected to a twitch.tv server
+    if ([[serverAddress lowercaseString] hasSuffix:@"twitch.tv"]) {
+        return YES;
+    }
+
+    return NO;
 }
 
 @end
