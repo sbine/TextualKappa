@@ -45,7 +45,7 @@
     if ([[input command] isEqualToString:@"PRIVMSG"]) {
 
         // Check for the presence of IRCv3 message tags
-        if ([input messageTags] != nil) {
+        if ([[input messageTags] count] > 0) {
             return [self interceptPrivmsgsKappaAddon:input senderInfo:[input sender] client:client];
         }
     }
@@ -64,7 +64,7 @@
     NSDictionary *messageTags = [input messageTags];
 
     // Check again for the presence of IRCv3 message tags, for science
-    if (messageTags != nil) {
+    if ([messageTags count] > 0) {
 
         NSString *nickname = senderInfo.nickname;
 
