@@ -15,7 +15,7 @@ If you still want to use this plugin, follow the instructions in the [Textual pl
 - ~~Support Twitch mod status (`user-type`)~~
 - ~~Support emotes sent in actions~~
 - Support emotes sent in own messages
-- Support broadcaster icon
+- ~~Support broadcaster icon~~
 - Respect `color` preference for display name
 - Handle deleted messages
 - Add preferences to support enabling/disabling the plugin

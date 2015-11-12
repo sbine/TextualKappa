@@ -1,4 +1,8 @@
-.tw-emoticon {
+.tw-emoticon, .tw-subscriber, .tw-broadcaster {
     vertical-align: middle;
 }
 
+.tw-line {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
