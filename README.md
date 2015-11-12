@@ -1,7 +1,7 @@
 # TextualKappa
 TextualKappa is a Twitch.tv chat plugin for the Textual IRC client that adds support for in-line emotes and subscriber/Turbo nickname indicators.
 
-![screenshot](http://sarabine.com/i/Screen%20Shot%202015-11-07%20at%203.53.03%20PM.png)
+![screenshot](http://sarabine.com/i/Screen%20Shot%202015-11-11%20at%209.28.29%20PM.png)
 
 ## Notes
 This plugin is in the early stages of development. Currently, it can only be built with the [latest Textual source](https://github.com/Codeux-Software/Textual) -- building on older versions will cause Textual to crash.
