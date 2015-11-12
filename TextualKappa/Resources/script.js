@@ -30,6 +30,7 @@ Textual.newMessagePostedToView = function(line)
                 sender[0].innerHTML = sender[0].innerHTML.replace(channelSubscriberRegex, '');
                 sender[0].innerHTML = subscriberIconForChannel(channel) + '' + sender[0].innerHTML;
             }
+            nickname = nickname.replace(channelSubscriberRegex, '');
         }
 
         var twitchBadgeMatches = sender[0].innerText.match(twitchBadgeRegex);
@@ -41,10 +42,11 @@ Textual.newMessagePostedToView = function(line)
                 sender[0].innerHTML = twitchBadgeForEmoticon(twitchBadgeMatches[i]) + '' + sender[0].innerHTML;
             }
 
+            nickname = nickname.replace(twitchBadgeRegex, '');
         }
 
         // Strip out images and replace escaped content in the 'nickname' attribute
-        nickname = nickname.replace('\\s', ' ').replace('<img[^>]+> ?', '');
+        nickname = nickname.replace(/\\s/g, ' ');
         sender[0].setAttribute('nickname', nickname);
 
         // Broadcaster icon
