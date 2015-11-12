@@ -20,3 +20,4 @@ If you still want to use this plugin, follow the instructions in the [Textual pl
 - Handle deleted messages
 - Add preferences to support enabling/disabling the plugin
 - Add support for [other Twitch.tv IRCv3 features](https://github.com/justintv/Twitch-API/blob/master/IRC.md)
+- ~~Add support for [BetterTTV emotes](https://api.betterttv.net/emotes)~~
