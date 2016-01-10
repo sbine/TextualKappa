@@ -7,73 +7,75 @@ var betterTTVEmotes = {};
 
 Textual.newMessagePostedToView = function(line)
 {
-    var element = document.getElementById("line-" + line);
+    if (document.body.dataset.twitchChannel === "1") {
+        var element = document.getElementById("line-" + line);
 
-    var message = element.getElementsByClassName('innerMessage');
-    var sender = element.getElementsByClassName('sender');
+        var message = element.getElementsByClassName('innerMessage');
+        var sender = element.getElementsByClassName('sender');
 
-    if (message[0] !== undefined) {
-        message = message[0];
+        if (message[0] !== undefined) {
+            message = message[0];
 
-        // Twitch emotes
-        var twitchEmoteMatches = message.innerText.match(twitchEmoteRegex);
-        if (twitchEmoteMatches && twitchEmoteMatches.length > 0) {
-            message.innerHTML = message.innerHTML.replace(twitchEmoteRegex, twitchEmoteRegexReplacer);
-        }
-    }
-
-    if (sender[0] !== undefined) {
-        sender = sender[0];
-
-        var nickname = sender.getAttribute('nickname');
-        var channel = document.body.getAttribute('channelname').replace('#', '');
-
-        // Channel subscriber icons
-        if (subscriberImages[channel]) {
-            // Remove subscriber emoji from the nickname and prepend the fetched icon to the sender line
-            var channelSubscriberMatches = sender.innerText.match(channelSubscriberRegex);
-            if (channelSubscriberMatches && channelSubscriberMatches.length > 0) {
-                sender.innerHTML = sender.innerHTML.replace(channelSubscriberRegex, '');
-                sender.innerHTML = subscriberIconForChannel(channel) + '' + sender.innerHTML;
+            // Twitch emotes
+            var twitchEmoteMatches = message.innerText.match(twitchEmoteRegex);
+            if (twitchEmoteMatches && twitchEmoteMatches.length > 0) {
+                message.innerHTML = message.innerHTML.replace(twitchEmoteRegex, twitchEmoteRegexReplacer);
             }
-            nickname = nickname.replace(channelSubscriberRegex, '');
         }
 
-        // Twitch staff / mods / Turbo icons
-        var twitchBadgeMatches = sender.innerText.match(twitchBadgeRegex);
-        if (twitchBadgeMatches && twitchBadgeMatches.length > 0) {
+        if (sender[0] !== undefined) {
+            sender = sender[0];
 
-            for (var i = twitchBadgeMatches.length - 1; i >= 0; i--) {
-                // Remove Twitch user-type emojis from the nickname and prepend them to the sender line, in reverse order
-                sender.innerHTML = sender.innerHTML.replace(twitchBadgeMatches[i], '');
-                sender.innerHTML = twitchBadgeForEmoticon(twitchBadgeMatches[i]) + '' + sender.innerHTML;
+            var nickname = sender.getAttribute('nickname');
+            var channel = document.body.getAttribute('channelname').replace('#', '');
+
+            // Channel subscriber icons
+            if (subscriberImages[channel]) {
+                // Remove subscriber emoji from the nickname and prepend the fetched icon to the sender line
+                var channelSubscriberMatches = sender.innerText.match(channelSubscriberRegex);
+                if (channelSubscriberMatches && channelSubscriberMatches.length > 0) {
+                    sender.innerHTML = sender.innerHTML.replace(channelSubscriberRegex, '');
+                    sender.innerHTML = subscriberIconForChannel(channel) + '' + sender.innerHTML;
+                }
+                nickname = nickname.replace(channelSubscriberRegex, '');
             }
 
-            nickname = nickname.replace(twitchBadgeRegex, '');
+            // Twitch staff / mods / Turbo icons
+            var twitchBadgeMatches = sender.innerText.match(twitchBadgeRegex);
+            if (twitchBadgeMatches && twitchBadgeMatches.length > 0) {
+
+                for (var i = twitchBadgeMatches.length - 1; i >= 0; i--) {
+                    // Remove Twitch user-type emojis from the nickname and prepend them to the sender line, in reverse order
+                    sender.innerHTML = sender.innerHTML.replace(twitchBadgeMatches[i], '');
+                    sender.innerHTML = twitchBadgeForEmoticon(twitchBadgeMatches[i]) + '' + sender.innerHTML;
+                }
+
+                nickname = nickname.replace(twitchBadgeRegex, '');
+            }
+
+            // BetterTTV emotes
+            var betterTTVEmoteMatches = message.innerText.match(betterTTVEmoteRegex);
+            if (betterTTVEmoteMatches && betterTTVEmoteMatches.length > 0) {
+                message.innerHTML = message.innerHTML.replace(betterTTVEmoteRegex, betterTTVEmoteRegexReplacer);
+            }
+
+            // Replace escaped content in the sender text
+            sender.innerHTML = sender.innerHTML.replace(/\\s/g, ' ');
+
+            // Replace escaped content in the 'nickname' attribute
+            nickname = nickname.replace(/\\s/g, ' ');
+            sender.setAttribute('nickname', nickname);
+
+            // Broadcaster icon
+            if (nickname.toLowerCase() === channel.toLowerCase()) {
+                sender.innerHTML = '<img class="tw-broadcaster" src="https://chat-badges.s3.amazonaws.com/broadcaster.png"> ' + sender.innerHTML;
+            }
         }
 
-        // BetterTTV emotes
-        var betterTTVEmoteMatches = message.innerText.match(betterTTVEmoteRegex);
-        if (betterTTVEmoteMatches && betterTTVEmoteMatches.length > 0) {
-            message.innerHTML = message.innerHTML.replace(betterTTVEmoteRegex, betterTTVEmoteRegexReplacer);
-        }
+        element.className = element.className + ' tw-line';
 
-        // Replace escaped content in the sender text
-        sender.innerHTML = sender.innerHTML.replace(/\\s/g, ' ');
-
-        // Replace escaped content in the 'nickname' attribute
-        nickname = nickname.replace(/\\s/g, ' ');
-        sender.setAttribute('nickname', nickname);
-
-        // Broadcaster icon
-        if (nickname.toLowerCase() === channel.toLowerCase()) {
-            sender.innerHTML = '<img class="tw-broadcaster" src="https://chat-badges.s3.amazonaws.com/broadcaster.png"> ' + sender.innerHTML;
-        }
+        updateNicknameAssociatedWithNewMessage(element);
     }
-
-    element.className = element.className + ' tw-line';
-
-    updateNicknameAssociatedWithNewMessage(element);
 }
 
 Textual.viewBodyDidLoadKappa = function()
