@@ -3,8 +3,11 @@ TextualKappa is a Twitch.tv chat plugin for the Textual IRC client that adds sup
 
 ![screenshot](http://sarabine.com/i/Screen%20Shot%202015-11-11%20at%209.28.29%20PM.png)
 
-## Notes
-This plugin is in the early stages of development.
+## Installation
+1. Navigate to Textual Preferences > Addons > Installed Addons
+2. Click the 'Open In Finder' button
+3. Move your downloaded copy of TextualKappa.bundle (unzipped) into the Extensions folder
+4. Restart Textual
 
 ## To-Do
 - ~~Automatically send the necessary CAP requests to Twitch's IRC server on-connect~~
