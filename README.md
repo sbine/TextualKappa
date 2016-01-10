@@ -6,7 +6,7 @@ TextualKappa is a Twitch.tv chat plugin for the Textual IRC client that adds sup
 ## Installation
 1. Navigate to Textual Preferences > Addons > Installed Addons
 2. Click the 'Open In Finder' button
-3. Move your downloaded copy of TextualKappa.bundle (unzipped) into the Extensions folder
+3. Move your downloaded copy of [TextualKappa.bundle](https://github.com/sbine/TextualKappa/releases/latest) (unzipped) into the Extensions folder
 4. Restart Textual
 
 ## To-Do
