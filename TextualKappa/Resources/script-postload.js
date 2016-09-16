@@ -1,1 +1,1 @@
-Textual.viewBodyDidLoadKappa();
+TextualKappa.twitchViewDidLoad();

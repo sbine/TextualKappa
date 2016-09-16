@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="14F1808" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="TPITextualKappa">
+            <connections>
+                <outlet property="preferenceView" destination="1" id="x8W-4w-90J"/>
+                <outlet property="serversArrayController" destination="SZ2-yl-YC4" id="xcI-WM-YiL"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView translatesAutoresizingMaskIntoConstraints="NO" id="1">
+            <rect key="frame" x="0.0" y="0.0" width="589" height="300"/>
+            <subviews>
+                <scrollView appearanceType="aqua" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YMp-vk-jks">
+                    <rect key="frame" x="304" y="37" width="250" height="160"/>
+                    <clipView key="contentView" id="wpy-fo-zOC">
+                        <rect key="frame" x="1" y="1" width="248" height="158"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" id="Dyx-KV-aSN" userLabel="Servers Table">
+                                <rect key="frame" x="0.0" y="0.0" width="248" height="19"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <size key="intercellSpacing" width="3" height="2"/>
+                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                <tableColumns>
+                                    <tableColumn identifier="" width="245" minWidth="40" maxWidth="1000" id="4gn-zM-Jyk">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="84z-DN-oOO">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <accessibility description="Highlight Keyword"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
+                                        <accessibility description="Highlight Keyword"/>
+                                        <connections>
+                                            <binding destination="SZ2-yl-YC4" name="value" keyPath="arrangedObjects.string" id="BTy-MS-Jl8"/>
+                                        </connections>
+                                    </tableColumn>
+                                </tableColumns>
+                                <connections>
+                                    <accessibilityConnection property="title" destination="bI1-l1-Qzn" id="kl6-f3-1iv"/>
+                                    <binding destination="SZ2-yl-YC4" name="content" keyPath="arrangedObjects" id="hzc-la-plF"/>
+                                    <binding destination="SZ2-yl-YC4" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="hzc-la-plF" id="XOU-wZ-Hz7"/>
+                                    <binding destination="SZ2-yl-YC4" name="sortDescriptors" keyPath="sortDescriptors" previousBinding="XOU-wZ-Hz7" id="hZs-0E-K0u"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </clipView>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="160" id="WwY-qg-QWG"/>
+                        <constraint firstAttribute="width" constant="250" id="xo1-vw-Udf"/>
+                    </constraints>
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="5kQ-GL-yI9">
+                        <rect key="frame" x="-100" y="-100" width="181" height="15"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="5KI-fy-IWS">
+                        <rect key="frame" x="167" y="1" width="15" height="114"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <connections>
+                        <accessibilityConnection property="title" destination="bI1-l1-Qzn" id="AJa-CA-dMI"/>
+                    </connections>
+                </scrollView>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eip-FI-YAU">
+                    <rect key="frame" x="331" y="16" width="30" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="30" id="Qbk-Uf-WIt"/>
+                    </constraints>
+                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSRemoveTemplate" imagePosition="overlaps" alignment="center" controlSize="mini" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aBF-Qn-C6U">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="miniSystem"/>
+                    </buttonCell>
+                    <accessibility description="Remove Selected Highlight Keyword"/>
+                    <connections>
+                        <action selector="remove:" target="SZ2-yl-YC4" id="LyX-7M-LnA"/>
+                        <binding destination="SZ2-yl-YC4" name="enabled" keyPath="canRemove" id="vIe-Wv-weG"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d3U-cp-ZDh">
+                    <rect key="frame" x="304" y="16" width="30" height="23"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="Bhr-eV-rtl"/>
+                        <constraint firstAttribute="width" constant="30" id="iJd-48-jxv"/>
+                    </constraints>
+                    <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="overlaps" alignment="center" controlSize="mini" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bCK-Z2-yJF">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="miniSystem"/>
+                    </buttonCell>
+                    <accessibility description="Add Highlight Keyword"/>
+                    <connections>
+                        <action selector="onAddServer:" target="-2" id="Iy1-qq-fVj"/>
+                    </connections>
+                </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="Eam-gF-PaI">
+                    <rect key="frame" x="88" y="180" width="152" height="18"/>
+                    <buttonCell key="cell" type="check" title="Enable TextualKappa" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Ex6-jl-uPG">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="preferenceChanged:" target="-2" id="mVS-il-6z2"/>
+                        <binding destination="23" name="value" keyPath="values.TPITextualKappaPlugin" id="aNP-Rn-UmE"/>
+                    </connections>
+                </button>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" preferredMaxLayoutWidth="347" translatesAutoresizingMaskIntoConstraints="NO" id="07T-i7-Wrd">
+                    <rect key="frame" x="119" y="246" width="337" height="34"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="TextualKappa provides integration with Twitch.tv IRC, including inline emotes and nickname indicators." id="3NF-GR-2Zd">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="t2Z-aV-E1f">
+                    <rect key="frame" x="88" y="151" width="172" height="18"/>
+                    <buttonCell key="cell" type="check" title="Enable Twitch.tv emotes" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="rf3-9E-VpG">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="preferenceChanged:" target="-2" id="l9E-eS-349"/>
+                        <binding destination="23" name="value" keyPath="values.TPITextualKappaTwitch" id="fN2-oB-cZM"/>
+                    </connections>
+                </button>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="17">
+                    <rect key="frame" x="88" y="122" width="179" height="18"/>
+                    <buttonCell key="cell" type="check" title="Enable BetterTTV emotes" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="18">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="preferenceChanged:" target="-2" id="22"/>
+                        <binding destination="23" name="value" keyPath="values.TPITextualKappaBetterTTV" id="27"/>
+                    </connections>
+                </button>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bI1-l1-Qzn">
+                    <rect key="frame" x="302" y="205" width="176" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Additional servers to enable" id="N1Z-Bs-y4X">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="eip-FI-YAU" firstAttribute="top" secondItem="d3U-cp-ZDh" secondAttribute="top" id="0Vi-UR-CW1"/>
+                <constraint firstItem="d3U-cp-ZDh" firstAttribute="top" secondItem="Dyx-KV-aSN" secondAttribute="bottom" id="4hd-ll-d0H"/>
+                <constraint firstItem="t2Z-aV-E1f" firstAttribute="top" secondItem="Eam-gF-PaI" secondAttribute="bottom" constant="15" id="8EI-C6-QZg"/>
+                <constraint firstItem="YMp-vk-jks" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="304" id="8Y7-49-ibE"/>
+                <constraint firstItem="07T-i7-Wrd" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="121" id="DQN-k8-hL1"/>
+                <constraint firstItem="eip-FI-YAU" firstAttribute="bottom" secondItem="d3U-cp-ZDh" secondAttribute="bottom" id="Fx8-jo-upi"/>
+                <constraint firstItem="eip-FI-YAU" firstAttribute="leading" secondItem="d3U-cp-ZDh" secondAttribute="trailing" constant="-3" id="K8i-eM-WyP"/>
+                <constraint firstItem="Dyx-KV-aSN" firstAttribute="leading" secondItem="d3U-cp-ZDh" secondAttribute="trailing" constant="-29" id="KMI-pM-Dgk"/>
+                <constraint firstItem="t2Z-aV-E1f" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="90" id="RTZ-7b-1xO"/>
+                <constraint firstItem="17" firstAttribute="top" secondItem="t2Z-aV-E1f" secondAttribute="bottom" constant="15" id="Rr3-Tr-Nmk"/>
+                <constraint firstItem="07T-i7-Wrd" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" id="X4J-aM-txd"/>
+                <constraint firstItem="Eam-gF-PaI" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="90" id="c5m-yz-JsO"/>
+                <constraint firstItem="17" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="90" id="eTb-WN-5LG"/>
+                <constraint firstItem="eip-FI-YAU" firstAttribute="top" secondItem="Dyx-KV-aSN" secondAttribute="bottom" id="fon-9C-iGr"/>
+                <constraint firstItem="YMp-vk-jks" firstAttribute="top" secondItem="07T-i7-Wrd" secondAttribute="bottom" constant="49" id="j65-IH-AUc"/>
+                <constraint firstItem="Eam-gF-PaI" firstAttribute="top" secondItem="07T-i7-Wrd" secondAttribute="bottom" constant="50" id="tnm-bz-hei"/>
+            </constraints>
+            <point key="canvasLocation" x="272.5" y="347"/>
+        </customView>
+        <arrayController alwaysUsesMultipleValuesMarker="YES" id="SZ2-yl-YC4" userLabel="Servers">
+            <declaredKeys>
+                <string>string</string>
+            </declaredKeys>
+            <connections>
+                <binding destination="23" name="contentArray" keyPath="values.TPITextualKappaServers" id="WKV-mQ-ksj">
+                    <dictionary key="options">
+                        <bool key="NSHandlesContentAsCompoundValue" value="YES"/>
+                    </dictionary>
+                </binding>
+            </connections>
+        </arrayController>
+        <userDefaultsController id="23" customClass="TPCPreferencesUserDefaultsController"/>
+    </objects>
+    <resources>
+        <image name="NSAddTemplate" width="11" height="11"/>
+        <image name="NSRemoveTemplate" width="11" height="11"/>
+    </resources>
+</document>

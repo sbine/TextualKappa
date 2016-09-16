@@ -8,9 +8,20 @@
 
 #import "TPITextualKappa.h"
 
+#define TWITCH_IRC_SERVER @"irc.chat.twitch.tv"
+
 @interface TPITextualKappa ()
 
-@property (nonatomic, strong) NSMutableArray *observedClients;
+@property (strong) IBOutlet NSView *preferenceView;
+@property (strong) IBOutlet NSArrayController *serversArrayController;
+@property (strong) IBOutlet NSTableView *serversTable;
+@property (strong) NSMutableArray *observedClients;
+
+- (NSView *)pluginPreferencesPaneView;
+- (NSString *)pluginPreferencesPaneMenuItemName;
+
+- (IBAction)preferenceChanged:(id)sender;
+- (IBAction)onAddServer:(id)sender;
 
 @end
 
@@ -21,17 +32,31 @@
 
 - (void)pluginLoadedIntoMemory
 {
-    [RZNotificationCenter() addObserver:self
-                               selector:@selector(logControllerViewFinishedLoading:)
-                                   name:TVCLogControllerViewFinishedLoadingNotification
-                                 object:nil];
+    [self performBlockOnMainThread:^{
+        NSDictionary *defaultPreferences = @{
+            @"TPITextualKappaPlugin": @(YES),
+            @"TPITextualKappaTwitch": @(YES),
+            @"TPITextualKappaBetterTTV": @(YES),
+            @"TPITextualKappaServers": @[TWITCH_IRC_SERVER],
+        };
+        [RZUserDefaults() registerDefaults:defaultPreferences];
 
-    [RZNotificationCenter() addObserver:self
-                               selector:@selector(addClientObservers)
-                                   name:IRCWorldClientListWasModifiedNotification
-                                 object:nil];
+        [TPIBundleFromClass() loadNibNamed:@"TPITextualKappaPrefs" owner:self topLevelObjects:nil];
+    }];
 
-    [self addClientObservers];
+    if ([RZUserDefaults() boolForKey:@"TPITextualKappaPlugin"]) {
+        [RZNotificationCenter() addObserver:self
+                                   selector:@selector(logControllerViewFinishedLoading:)
+                                       name:TVCLogControllerViewFinishedLoadingNotification
+                                     object:nil];
+
+        [RZNotificationCenter() addObserver:self
+                                   selector:@selector(addClientObservers)
+                                       name:IRCWorldClientListWasModifiedNotification
+                                     object:nil];
+
+        [self addClientObservers];
+    }
 }
 
 - (void)pluginWillBeUnloadedFromMemory
@@ -46,7 +71,22 @@
 
         // Check for the presence of IRCv3 message tags
         if ([[input messageTags] count] > 0) {
-            return [self interceptPrivmsgsKappaAddon:input senderInfo:[input sender] client:client];
+            return [self interceptPrivmsgsKappaAddon:[input mutableCopy] senderInfo:[[input sender] mutableCopy] client:client];
+        }
+    }
+
+    // Capture USERSTATE
+    if ([[input command] isEqualToString:@"USERSTATE"]) {
+        NSDictionary *messageTags = [input messageTags];
+
+        // Twitch sends username capitalization preferences in the "display-name" key
+        // Pass this information to JavaScript to replace when rendering
+        if ((messageTags[@"display-name"] != nil)) {
+            TVCLogView *webView = mainWindow().selectedItem.viewController.backingView;
+
+            NSString *code = [NSString stringWithFormat:@"TextualKappa.updateDisplayName('%@');", messageTags[@"display-name"]];
+
+            [webView evaluateJavaScript:code];
         }
     }
 
@@ -56,11 +96,10 @@
 #pragma mark -
 #pragma mark Twitch PRIVMSG Parsing
 
-- (IRCMessage *)interceptPrivmsgsKappaAddon:(IRCMessage *)input senderInfo:(IRCPrefix *)senderInfo client:(IRCClient *)client
+- (IRCMessage *)interceptPrivmsgsKappaAddon:(IRCMessageMutable *)input senderInfo:(IRCPrefixMutable *)senderInfo client:(IRCClient *)client
 {
     // Make a mutable copy of message parameters to modify & return
     NSMutableArray *mutableParams = [[input params] mutableCopy];
-
     NSDictionary *messageTags = [input messageTags];
 
     // Check again for the presence of IRCv3 message tags, for science
@@ -119,6 +158,7 @@
         }
 
         [senderInfo setNickname:nickname];
+        [input setSender:senderInfo];
         [input setParams:mutableParams];
     }
 
@@ -135,7 +175,9 @@
         TVCLogController *controller = [notification object];
 
         if (controller != nil) {
-            DOMDocument *document = [[controller webView] mainFrameDocument];
+            TVCLogView *logView = [controller backingView];
+            WebView *webView = (WebView *)[logView webView];
+            DOMDocument *document = [webView mainFrameDocument];
             DOMNode *head = [[document getElementsByTagName:@"head"] item:0];
             NSBundle *mainBundle = [NSBundle bundleForClass:[self class]];
 
@@ -157,7 +199,7 @@
             [head appendChild:jsInclude];
 
             // Mark Twitch channels with a data attribute
-            if ([self isTwitchClient:[controller associatedClient]]) {
+            if ([self pluginIsEnabledForClient:[controller associatedClient]]) {
                 DOMNode *bodyNode = [[document getElementsByTagName:@"body"] item:0];
                 if ([bodyNode isKindOfClass:[DOMElement class]]) {
                     DOMElement *body = (DOMElement *) bodyNode;
@@ -184,7 +226,7 @@
         IRCClient *client = object;
 
         // Check if we are connected to a twitch.tv server
-        if ([self isTwitchClient:client] && [client isConnected] == YES) {
+        if ([self pluginIsEnabledForClient:client] && [client isConnected] == YES) {
 
             // Send Twitch vendor-specific CAP requests
             [object send:IRCPrivateCommandIndex("cap"), @"REQ", @"twitch.tv/tags", nil];
@@ -213,8 +255,7 @@
         for (IRCClient *client in clientList) {
 
             // Only add observers for twitch.tv servers
-            // TODO: handle proxies
-            if ([self isTwitchClient:client]) {
+            if ([self pluginIsEnabledForClient:client]) {
                 if ([self.observedClients containsObject:client] == NO) {
                     [self.observedClients addObject:client];
 
@@ -316,16 +357,65 @@
 #pragma mark -
 #pragma mark Helper Functions
 
-- (BOOL)isTwitchClient:(IRCClient *)client
+- (BOOL)pluginIsEnabledForClient:(IRCClient *)client
 {
     NSString *serverAddress = [[client config] serverAddress];
 
     // Check if we are connected to a twitch.tv server
-    if ([[serverAddress lowercaseString] hasSuffix:@"twitch.tv"]) {
+    if ([[serverAddress lowercaseString] hasSuffix:@".twitch.tv"]) {
         return YES;
     }
 
+    // Check if we are connected to a manually enabled server
+    NSArray *manuallyEnabledServers = [RZUserDefaults() arrayForKey:@"TPITextualKappaServers"];
+    for (NSDictionary *serverDictionary in manuallyEnabledServers) {
+        for (id key in serverDictionary) {
+            NSString *server = [serverDictionary valueForKey:key];
+            if ([[server lowercaseString] isEqualToString:[serverAddress lowercaseString]]) {
+                return YES;
+            }
+        }
+    }
+
     return NO;
+}
+
+#pragma mark -
+#pragma mark Preference Pane
+
+- (NSString *)pluginPreferencesPaneMenuItemName
+{
+    return @"TextualKappa";
+}
+
+- (NSView *)pluginPreferencesPaneView
+{
+    return self.preferenceView;
+}
+
+
+- (void)updatePreferences
+{
+}
+
+- (IBAction)preferenceChanged:(id)sender
+{
+    [self updatePreferences];
+}
+
+- (void)editTableView:(NSTableView *)tableView
+{
+    NSInteger rowSelection = ([tableView numberOfRows] - 1);
+
+    [tableView scrollRowToVisible:rowSelection];
+    [tableView editColumn:0 row:rowSelection withEvent:nil select:YES];
+}
+
+- (void)onAddServer:(id)sender
+{
+    [[self serversArrayController] add:nil];
+
+    [self editTableView:[self serversTable]];
 }
 
 @end
