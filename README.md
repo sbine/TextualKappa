@@ -18,7 +18,8 @@ TextualKappa is a Twitch.tv chat plugin for the Textual IRC client that adds sup
 - Support emotes sent in own messages
 - ~~Support broadcaster icon~~
 - Respect `color` preference for display name
+- ~~Respect capitalization preference for display name~~
 - Handle deleted messages
-- Add preferences to support enabling/disabling the plugin
+- ~~Add preferences to support enabling/disabling the plugin~~
 - Add support for [other Twitch.tv IRCv3 features](https://github.com/justintv/Twitch-API/blob/master/IRC.md)
 - ~~Add support for [BetterTTV emotes](https://api.betterttv.net/emotes)~~
