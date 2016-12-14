@@ -13,6 +13,7 @@ TextualKappa.isTwitchChannel = function() {
     return parseInt(document.body.getAttribute('data-twitch-channel')) === 1;
 }
 
+// https://github.com/justintv/Twitch-API/blob/master/IRC.md#userstate-1
 TextualKappa.updateDisplayName = function(name) {
     TextualKappa.displayName = name;
 }
@@ -116,13 +117,13 @@ Textual.newMessagePostedToView = function(line)
                 nickname = nickname.replace(TextualKappa.twitchBadgeRegex, '');
             }
 
-            // BetterTTV emotes
+            // BetterTTV global emotes
             var betterTTVGlobalEmoteMatches = message.innerText.match(TextualKappa.betterTTVGlobalEmoteRegex);
             if (betterTTVGlobalEmoteMatches && betterTTVGlobalEmoteMatches.length > 0) {
                 message.innerHTML = message.innerHTML.replace(TextualKappa.betterTTVGlobalEmoteRegex, betterTTVGlobalEmoteRegexReplacer);
             }
 
-            // BetterTTV emotes
+            // BetterTTV channel emotes
             var betterTTVChannelEmoteMatches = message.innerText.match(TextualKappa.betterTTVChannelEmoteRegex);
             if (betterTTVChannelEmoteMatches && betterTTVChannelEmoteMatches.length > 0) {
                 message.innerHTML = message.innerHTML.replace(TextualKappa.betterTTVChannelEmoteRegex, betterTTVChannelEmoteRegexReplacer);
@@ -209,5 +210,6 @@ function getJSONFromUrl(url, callback) {
         }
     }
     xmlhttp.open("GET", url, true);
+    xmlhttp.setRequestHeader('Client-ID', 'ry6a0ce7d3utexhuduu5emdfk3i3kmy');
     xmlhttp.send();
 }
