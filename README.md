@@ -14,6 +14,7 @@ TextualKappa is a Twitch.tv chat plugin for the Textual IRC client that adds sup
 - ~~Render emoticons in the plugin itself (eliminating the need for the companion JS)~~ Used [xlexi's method](https://github.com/xlexi/Textual-Inline-Media) of automatically injecting CSS/JS
 - ~~Support channel-specific subscriber icons~~
 - ~~Support Twitch mod status (`user-type`)~~
+- ~~Support badges (Prime/Turbo/cheer)~~
 - ~~Support emotes sent in actions~~
 - Support emotes sent in own messages
 - ~~Support broadcaster icon~~
