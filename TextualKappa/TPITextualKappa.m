@@ -117,6 +117,16 @@
 
         }
 
+        // Does this user have badges assigned?
+        if (messageTags[@"badges"] != nil) {
+            nickname = [self addBadgesToNickname:nickname withBadges:messageTags[@"badges"]];
+        }
+
+        /*
+         * Commented out 12/14/16
+         * Twitch now passes turbo/subscriber/moderator as part of the "badges" property
+         * This method of determining status will likely be phased out
+
         // Is this user a subscriber to the current broadcast?
         if ((messageTags[@"subscriber"] != nil) && ([messageTags[@"subscriber"] integerValue] == 1)) {
 
@@ -130,13 +140,16 @@
             nickname = [NSString stringWithFormat:@"⚡%@", nickname];
 
         }
+         */
 
         // Is this user a moderator or Twitch staff?
         if ((messageTags[@"user-type"] != nil)) {
 
             // Use standard emoji as placeholders
             if ([messageTags[@"user-type"]  isEqual:@"mod"]) {
-                nickname = [NSString stringWithFormat:@"⚔%@", nickname];
+                // TODO: confirm that global_mod/staff/admin are also specified in "badges"
+                // if so, remove this whole block
+                //nickname = [NSString stringWithFormat:@"⚔%@", nickname];
             } else if ([messageTags[@"user-type"]  isEqual:@"global_mod"]) {
                 nickname = [NSString stringWithFormat:@"🔨%@", nickname];
             } else if ([messageTags[@"user-type"]  isEqual:@"admin"]) {
@@ -352,6 +365,52 @@
     }
 
     return replacedString;
+}
+
+- (NSString *)addBadgesToNickname:(NSString *)nickname withBadges:(NSString *)badges
+{
+    NSArray *badgeArray = [NSArray new];
+    NSMutableString *mutableNickname = [nickname mutableCopy];
+
+    // Distinct badges are separated by ","
+    badgeArray = [badges componentsSeparatedByString:@","];
+
+    // Iterate over each badge
+    for (NSString *badge in badgeArray) {
+
+        NSRange positionOfSlash = [badge rangeOfString:@"/"];
+
+        if (positionOfSlash.location != NSNotFound) {
+            // Badges are versioned with "/", e.g. "premium/1"
+            NSArray *badgeVersion = [NSArray new];
+            badgeVersion = [badge componentsSeparatedByString:@"/"];
+
+            if ((badgeVersion[0] != nil) && (badgeVersion[1] != nil)) {
+                NSString *badgeType = badgeVersion[0];
+
+                if ([badgeType isEqualToString:@"premium"]) {
+                    mutableNickname = [NSMutableString stringWithFormat:@"👑/%@/%@", badgeVersion[1], mutableNickname];
+                }
+                else if ([badgeType isEqualToString:@"turbo"]) {
+                    mutableNickname = [NSMutableString stringWithFormat:@"⚡/%@/%@", badgeVersion[1], mutableNickname];
+                }
+                else if ([badgeType isEqualToString:@"subscriber"]) {
+                    // We don't want global subscriber icons.
+                    // Use the old placeholder format so JS will fetch channel-specific subscriber icons
+                    mutableNickname = [NSMutableString stringWithFormat:@"💎%@", mutableNickname];
+                }
+                else if ([badgeType isEqualToString:@"moderator"]) {
+                    mutableNickname = [NSMutableString stringWithFormat:@"⚔/%@/%@", badgeVersion[1], mutableNickname];
+                }
+                else if ([badgeType isEqualToString:@"bits"]) {
+                    mutableNickname = [NSMutableString stringWithFormat:@"🎉/%@/%@", badgeVersion[1], mutableNickname];
+                }
+                
+            }
+        }
+    }
+
+    return mutableNickname;
 }
 
 #pragma mark -

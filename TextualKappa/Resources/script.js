@@ -2,10 +2,12 @@ var TextualKappa = {};
 
 TextualKappa.twitchEmoteRegex = new RegExp(':twitch_(\\d+):', 'g');
 TextualKappa.channelSubscriberRegex = new RegExp('(💎)', 'g');
-TextualKappa.twitchBadgeRegex = new RegExp('(⚡|⚔|🔨|🔰|🔧)', 'g');
+TextualKappa.twitchBadgeRegex = new RegExp('(🔨|🔰|🔧)', 'g');
+TextualKappa.twitchBadgeRegexV2 = new RegExp('(⚡|⚔|⭐|👑|🎉)/(\\d+)/', 'g');
 TextualKappa.betterTTVGlobalEmoteRegex = 'ForeverAlone';
 TextualKappa.betterTTVChannelEmoteRegex = 'ForeverAlone';
 TextualKappa.subscriberImages = {};
+TextualKappa.twitchBadges = {};
 TextualKappa.betterTTVGlobalEmotes = {};
 TextualKappa.betterTTVChannelEmotes = {};
 
@@ -23,6 +25,7 @@ TextualKappa.twitchViewDidLoad = function()
     if (TextualKappa.isTwitchChannel()) {
         var channel = document.body.getAttribute('channelname').replace('#', '');
 
+        // Fetch channel-specific subscriber images
         if (TextualKappa.subscriberImages[channel] === undefined) {
             getJSONFromUrl("https://api.twitch.tv/kraken/chat/" + channel + "/badges", function(response) {
                 resp = JSON.parse(response);
@@ -33,12 +36,23 @@ TextualKappa.twitchViewDidLoad = function()
             });
         }
 
+        // Fetch Twitch global badges
+        if (TextualKappa.twitchBadges.length === undefined) {
+            getJSONFromUrl("https://badges.twitch.tv/v1/badges/global/display?language=en", function(response) {
+                resp = JSON.parse(response);
+                if (resp.badge_sets !== undefined) {
+                    TextualKappa.twitchBadges = resp.badge_sets;
+                }
+            });
+        }
+
+        // Fetch BetterTTV global emotes
         if (TextualKappa.betterTTVGlobalEmotes.length === undefined) {
-            getJSONFromUrl("https://api.betterttv.net/emotes", function(response) {
+            getJSONFromUrl("https://api.betterttv.net/2/emotes", function(response) {
                 resp = JSON.parse(response);
                 if (resp.emotes !== undefined) {
                     for (var i = 0; i < resp.emotes.length; i++) {
-                        TextualKappa.betterTTVGlobalEmotes[resp.emotes[i].regex.replace('(', '').replace(')', '')] = resp.emotes[i].url;
+                        TextualKappa.betterTTVGlobalEmotes[resp.emotes[i].code.replace('(', '\\(').replace(')', '\\)')] = "//cdn.betterttv.net/emote/" + resp.emotes[i].id + "/1x";
                     }
                     for (var emote in TextualKappa.betterTTVGlobalEmotes) {
                         if (TextualKappa.betterTTVGlobalEmotes.hasOwnProperty(emote)) {
@@ -50,6 +64,7 @@ TextualKappa.twitchViewDidLoad = function()
             });
         }
 
+        // Fetch BetterTTV channel-specific emotes
         if (TextualKappa.betterTTVChannelEmotes[channel] === undefined) {
             getJSONFromUrl("https://api.betterttv.net/2/channels/" + channel, function(response) {
                 resp = JSON.parse(response);
@@ -93,6 +108,24 @@ Textual.newMessagePostedToView = function(line)
             var nickname = sender.getAttribute('nickname');
             var channel = document.body.getAttribute('channelname').replace('#', '');
 
+            // Badges for mods / premium / turbo / bits
+            if (TextualKappa.twitchBadges.hasOwnProperty('admin')) {
+                var twitchBadgeMatchesV2 = sender.innerText.match(TextualKappa.twitchBadgeRegexV2);
+                if (twitchBadgeMatchesV2 && twitchBadgeMatchesV2.length > 0) {
+
+                    for (var i = twitchBadgeMatchesV2.length - 1; i >= 0; i--) {
+                        // Remove Twitch user-type emojis from the nickname and prepend them to the sender line, in reverse order
+                        sender.innerHTML = sender.innerHTML.replace(twitchBadgeMatchesV2[i], '');
+
+                        // Twitch badges are versioned e.g. "premium/1/"
+                        var matchDirectives = twitchBadgeMatchesV2[i].split('/');
+                        sender.innerHTML = twitchBadgeForEmoticonV2(matchDirectives[0], matchDirectives[1]) + '' + sender.innerHTML;
+                    }
+
+                    nickname = nickname.replace(TextualKappa.twitchBadgeRegexV2, '');
+                }
+            }
+
             // Channel subscriber icons
             if (TextualKappa.subscriberImages[channel]) {
                 // Remove subscriber emoji from the nickname and prepend the fetched icon to the sender line
@@ -104,7 +137,7 @@ Textual.newMessagePostedToView = function(line)
                 nickname = nickname.replace(TextualKappa.channelSubscriberRegex, '');
             }
 
-            // Twitch staff / mods / Turbo icons
+            // Twitch staff / admin
             var twitchBadgeMatches = sender.innerText.match(TextualKappa.twitchBadgeRegex);
             if (twitchBadgeMatches && twitchBadgeMatches.length > 0) {
 
@@ -197,6 +230,38 @@ function twitchBadgeForEmoticon(emoticon) {
     return '<img class="tw-emoticon" src="https://chat-badges.s3.amazonaws.com/' + userType + '.png"> ';
 }
 
+function twitchBadgeForEmoticonV2(emoticon, version) {
+    var userType = '';
+    switch (emoticon) {
+        case '⚔':
+            userType = 'moderator';
+            break;
+        case '🔨':
+            userType = 'global_mod';
+            break;
+        case '🔰':
+            userType = 'staff';
+            break;
+        case '🔧':
+            userType = 'admin';
+            break;
+        case '⭐':
+            userType = 'subscriber';
+            break;
+        case '👑':
+            userType = 'premium';
+            break;
+        case '🎉':
+            userType = 'bits';
+            break;
+        case '⚡':
+        default:
+            userType = 'turbo';
+            break;
+    }
+    return '<img class="tw-emoticon" src="' + TextualKappa.twitchBadges[userType].versions[version].image_url_1x + '"> ';
+}
+
 function subscriberIconForChannel(channel) {
     return '<img class="tw-subscriber" src="' + TextualKappa.subscriberImages[channel] + '"> ';
 }
@@ -210,6 +275,9 @@ function getJSONFromUrl(url, callback) {
         }
     }
     xmlhttp.open("GET", url, true);
-    xmlhttp.setRequestHeader('Client-ID', 'ry6a0ce7d3utexhuduu5emdfk3i3kmy');
+    if (url.indexOf('kraken') !== -1) {
+        // Pass Client-ID as Twitch's Kraken API now requires it
+        xmlhttp.setRequestHeader('Client-ID', 'ry6a0ce7d3utexhuduu5emdfk3i3kmy');
+    }
     xmlhttp.send();
 }

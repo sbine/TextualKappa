@@ -112,7 +112,7 @@
 		56872D0E1BE95BD8008F70AF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = sbine;
 				TargetAttributes = {
 					56872D151BE95BD9008F70AF = {
@@ -243,7 +243,6 @@
 		56872D1D1BE95BD9008F70AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				BUNDLE_LOADER = "../Textual/Build Results/Release/Textual.app/Contents/MacOS/Textual";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"../Textual/Build Results/Release/Textual.app/Contents/Frameworks/**\"";
@@ -260,7 +259,6 @@
 		56872D1E1BE95BD9008F70AF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				BUNDLE_LOADER = "../Textual/Build Results/Release/Textual.app/Contents/MacOS/Textual";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"../Textual/Build Results/Release/Textual.app/Contents/Frameworks/**\"";
