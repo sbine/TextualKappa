@@ -15,6 +15,14 @@ TextualKappa.isTwitchChannel = function() {
     return parseInt(document.body.getAttribute('data-twitch-channel')) === 1;
 }
 
+TextualKappa.isEnabledTwitch = function() {
+    return parseInt(document.body.getAttribute('data-twitch-enabled-twitch')) === 1;
+}
+
+TextualKappa.isEnabledBetterTTV = function() {
+    return parseInt(document.body.getAttribute('data-twitch-enabled-betterttv')) === 1;
+}
+
 // https://github.com/justintv/Twitch-API/blob/master/IRC.md#userstate-1
 TextualKappa.updateDisplayName = function(name) {
     TextualKappa.displayName = name;
@@ -46,40 +54,42 @@ TextualKappa.twitchViewDidLoad = function()
             });
         }
 
-        // Fetch BetterTTV global emotes
-        if (TextualKappa.betterTTVGlobalEmotes.length === undefined) {
-            getJSONFromUrl("https://api.betterttv.net/2/emotes", function(response) {
-                resp = JSON.parse(response);
-                if (resp.emotes !== undefined) {
-                    for (var i = 0; i < resp.emotes.length; i++) {
-                        TextualKappa.betterTTVGlobalEmotes[resp.emotes[i].code.replace('(', '\\(').replace(')', '\\)')] = "//cdn.betterttv.net/emote/" + resp.emotes[i].id + "/1x";
-                    }
-                    for (var emote in TextualKappa.betterTTVGlobalEmotes) {
-                        if (TextualKappa.betterTTVGlobalEmotes.hasOwnProperty(emote)) {
-                            TextualKappa.betterTTVGlobalEmoteRegex = TextualKappa.betterTTVGlobalEmoteRegex + '|' + emote;
+        if (TextualKappa.isEnabledBetterTTV()) {
+            // Fetch BetterTTV global emotes
+            if (TextualKappa.betterTTVGlobalEmotes.length === undefined) {
+                getJSONFromUrl("https://api.betterttv.net/2/emotes", function(response) {
+                    resp = JSON.parse(response);
+                    if (resp.emotes !== undefined) {
+                        for (var i = 0; i < resp.emotes.length; i++) {
+                            TextualKappa.betterTTVGlobalEmotes[resp.emotes[i].code.replace('(', '\\(').replace(')', '\\)')] = "//cdn.betterttv.net/emote/" + resp.emotes[i].id + "/1x";
+                        }
+                        for (var emote in TextualKappa.betterTTVGlobalEmotes) {
+                            if (TextualKappa.betterTTVGlobalEmotes.hasOwnProperty(emote)) {
+                                TextualKappa.betterTTVGlobalEmoteRegex = TextualKappa.betterTTVGlobalEmoteRegex + '|' + emote;
+                            }
                         }
                     }
-                }
-                TextualKappa.betterTTVGlobalEmoteRegex = new RegExp('\\b(' + TextualKappa.betterTTVGlobalEmoteRegex + ')\\b', 'g');
-            });
-        }
+                    TextualKappa.betterTTVGlobalEmoteRegex = new RegExp('\\b(' + TextualKappa.betterTTVGlobalEmoteRegex + ')\\b', 'g');
+                });
+            }
 
-        // Fetch BetterTTV channel-specific emotes
-        if (TextualKappa.betterTTVChannelEmotes[channel] === undefined) {
-            getJSONFromUrl("https://api.betterttv.net/2/channels/" + channel, function(response) {
-                resp = JSON.parse(response);
-                if (resp.emotes !== undefined) {
-                    for (var i = 0; i < resp.emotes.length; i++) {
-                        TextualKappa.betterTTVChannelEmotes[resp.emotes[i].code] = "//cdn.betterttv.net/emote/" + resp.emotes[i].id + "/1x";
-                    }
-                    for (var emote in TextualKappa.betterTTVChannelEmotes) {
-                        if (TextualKappa.betterTTVChannelEmotes.hasOwnProperty(emote)) {
-                            TextualKappa.betterTTVChannelEmoteRegex = TextualKappa.betterTTVChannelEmoteRegex + '|' + emote;
+            // Fetch BetterTTV channel-specific emotes
+            if (TextualKappa.betterTTVChannelEmotes[channel] === undefined) {
+                getJSONFromUrl("https://api.betterttv.net/2/channels/" + channel, function(response) {
+                    resp = JSON.parse(response);
+                    if (resp.emotes !== undefined) {
+                        for (var i = 0; i < resp.emotes.length; i++) {
+                            TextualKappa.betterTTVChannelEmotes[resp.emotes[i].code] = "//cdn.betterttv.net/emote/" + resp.emotes[i].id + "/1x";
+                        }
+                        for (var emote in TextualKappa.betterTTVChannelEmotes) {
+                            if (TextualKappa.betterTTVChannelEmotes.hasOwnProperty(emote)) {
+                                TextualKappa.betterTTVChannelEmoteRegex = TextualKappa.betterTTVChannelEmoteRegex + '|' + emote;
+                            }
                         }
                     }
-                }
-                TextualKappa.betterTTVChannelEmoteRegex = new RegExp('\\b(' + TextualKappa.betterTTVChannelEmoteRegex + ')\\b', 'g');
-            });
+                    TextualKappa.betterTTVChannelEmoteRegex = new RegExp('\\b(' + TextualKappa.betterTTVChannelEmoteRegex + ')\\b', 'g');
+                });
+            }
         }
     }
 }
@@ -95,10 +105,12 @@ Textual.newMessagePostedToView = function(line)
         if (message[0] !== undefined) {
             message = message[0];
 
-            // Twitch emotes
-            var twitchEmoteMatches = message.innerText.match(TextualKappa.twitchEmoteRegex);
-            if (twitchEmoteMatches && twitchEmoteMatches.length > 0) {
-                message.innerHTML = message.innerHTML.replace(TextualKappa.twitchEmoteRegex, twitchEmoteRegexReplacer);
+            if (TextualKappa.isEnabledTwitch()) {
+                // Twitch emotes
+                var twitchEmoteMatches = message.innerText.match(TextualKappa.twitchEmoteRegex);
+                if (twitchEmoteMatches && twitchEmoteMatches.length > 0) {
+                    message.innerHTML = message.innerHTML.replace(TextualKappa.twitchEmoteRegex, twitchEmoteRegexReplacer);
+                }
             }
         }
 
@@ -150,16 +162,18 @@ Textual.newMessagePostedToView = function(line)
                 nickname = nickname.replace(TextualKappa.twitchBadgeRegex, '');
             }
 
-            // BetterTTV global emotes
-            var betterTTVGlobalEmoteMatches = message.innerText.match(TextualKappa.betterTTVGlobalEmoteRegex);
-            if (betterTTVGlobalEmoteMatches && betterTTVGlobalEmoteMatches.length > 0) {
-                message.innerHTML = message.innerHTML.replace(TextualKappa.betterTTVGlobalEmoteRegex, betterTTVGlobalEmoteRegexReplacer);
-            }
+            if (TextualKappa.isEnabledBetterTTV()) {
+                // BetterTTV global emotes
+                var betterTTVGlobalEmoteMatches = message.innerText.match(TextualKappa.betterTTVGlobalEmoteRegex);
+                if (betterTTVGlobalEmoteMatches && betterTTVGlobalEmoteMatches.length > 0) {
+                    message.innerHTML = message.innerHTML.replace(TextualKappa.betterTTVGlobalEmoteRegex, betterTTVGlobalEmoteRegexReplacer);
+                }
 
-            // BetterTTV channel emotes
-            var betterTTVChannelEmoteMatches = message.innerText.match(TextualKappa.betterTTVChannelEmoteRegex);
-            if (betterTTVChannelEmoteMatches && betterTTVChannelEmoteMatches.length > 0) {
-                message.innerHTML = message.innerHTML.replace(TextualKappa.betterTTVChannelEmoteRegex, betterTTVChannelEmoteRegexReplacer);
+                // BetterTTV channel emotes
+                var betterTTVChannelEmoteMatches = message.innerText.match(TextualKappa.betterTTVChannelEmoteRegex);
+                if (betterTTVChannelEmoteMatches && betterTTVChannelEmoteMatches.length > 0) {
+                    message.innerHTML = message.innerHTML.replace(TextualKappa.betterTTVChannelEmoteRegex, betterTTVChannelEmoteRegexReplacer);
+                }
             }
 
             // Replace escaped content in the sender text

@@ -161,13 +161,15 @@
         }
 
         // Emoticons!
-        if ((messageTags[@"emotes"] != nil) && ([input params][1] != nil)) {
+        if ([RZUserDefaults() boolForKey:@"TPITextualKappaTwitch"]) {
+            if ((messageTags[@"emotes"] != nil) && ([input params][1] != nil)) {
 
-            NSString *messageString = [input params][1];
-            NSDictionary *emoteDirectives = [self getEmoticonDirectivesFromString:messageString withEmoteIndices:messageTags[@"emotes"]];
-            messageString = [self replaceEmoticonsInString:messageString withEmoteDirectives:emoteDirectives];
+                NSString *messageString = [input params][1];
+                NSDictionary *emoteDirectives = [self getEmoticonDirectivesFromString:messageString withEmoteIndices:messageTags[@"emotes"]];
+                messageString = [self replaceEmoticonsInString:messageString withEmoteDirectives:emoteDirectives];
 
-            mutableParams[1] = messageString;
+                mutableParams[1] = messageString;
+            }
         }
 
         [senderInfo setNickname:nickname];
@@ -216,7 +218,15 @@
                 DOMNode *bodyNode = [[document getElementsByTagName:@"body"] item:0];
                 if ([bodyNode isKindOfClass:[DOMElement class]]) {
                     DOMElement *body = (DOMElement *) bodyNode;
+
                     [body setAttribute:@"data-twitch-channel" value:@"1"];
+
+                    if ([RZUserDefaults() boolForKey:@"TPITextualKappaTwitch"]) {
+                        [body setAttribute:@"data-twitch-enabled-twitch" value:@"1"];
+                    }
+                    if ([RZUserDefaults() boolForKey:@"TPITextualKappaBetterTTV"]) {
+                        [body setAttribute:@"data-twitch-enabled-betterttv" value:@"1"];
+                    }
 
                     DOMElement *scriptPostLoadInclude = [document createElement:@"script"];
                     [scriptPostLoadInclude setAttribute:@"type" value:@"application/ecmascript"];
