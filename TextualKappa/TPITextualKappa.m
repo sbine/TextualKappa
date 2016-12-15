@@ -37,7 +37,6 @@
             @"TPITextualKappaPlugin": @(YES),
             @"TPITextualKappaTwitch": @(YES),
             @"TPITextualKappaBetterTTV": @(YES),
-            @"TPITextualKappaServers": @[TWITCH_IRC_SERVER],
         };
         [RZUserDefaults() registerDefaults:defaultPreferences];
 
@@ -437,11 +436,15 @@
 
     // Check if we are connected to a manually enabled server
     NSArray *manuallyEnabledServers = [RZUserDefaults() arrayForKey:@"TPITextualKappaServers"];
-    for (NSDictionary *serverDictionary in manuallyEnabledServers) {
-        for (id key in serverDictionary) {
-            NSString *server = [serverDictionary valueForKey:key];
-            if ([[server lowercaseString] isEqualToString:[serverAddress lowercaseString]]) {
-                return YES;
+    
+    if ([manuallyEnabledServers count] > 0) {
+        for (NSDictionary *serverDictionary in manuallyEnabledServers) {
+            
+            for (id key in serverDictionary) {
+                NSString *server = [serverDictionary valueForKey:key];
+                if ([[server lowercaseString] isEqualToString:[serverAddress lowercaseString]]) {
+                    return YES;
+                }
             }
         }
     }
