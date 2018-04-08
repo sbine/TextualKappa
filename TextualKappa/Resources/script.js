@@ -31,7 +31,7 @@ TextualKappa.updateDisplayName = function(name) {
 TextualKappa.twitchViewDidLoad = function()
 {
     if (TextualKappa.isTwitchChannel()) {
-        var channel = document.body.getAttribute('channelname').replace('#', '');
+        var channel = document.body.getAttribute('data-view-name').replace('#', '');
 
         // Fetch channel-specific subscriber images
         if (TextualKappa.subscriberImages[channel] === undefined) {
