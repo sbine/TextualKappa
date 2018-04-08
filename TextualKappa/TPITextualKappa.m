@@ -427,23 +427,26 @@
 
 - (BOOL)pluginIsEnabledForClient:(IRCClient *)client
 {
-    NSString *serverAddress = [[client config] serverAddress];
+    NSArray *serverList = [[client config] serverList];
 
-    // Check if we are connected to a twitch.tv server
-    if ([[serverAddress lowercaseString] hasSuffix:@".twitch.tv"]) {
-        return YES;
-    }
-
-    // Check if we are connected to a manually enabled server
     NSArray *manuallyEnabledServers = [RZUserDefaults() arrayForKey:@"TPITextualKappaServers"];
-    
-    if ([manuallyEnabledServers count] > 0) {
-        for (NSDictionary *serverDictionary in manuallyEnabledServers) {
-            
-            for (id key in serverDictionary) {
-                NSString *server = [serverDictionary valueForKey:key];
-                if ([[server lowercaseString] isEqualToString:[serverAddress lowercaseString]]) {
-                    return YES;
+
+    for (IRCServer *server in serverList) {
+        NSString *serverAddress = [[server serverAddress] lowercaseString];
+
+        // Check if we are connected to a twitch.tv server
+        if ([serverAddress hasSuffix:@".twitch.tv"]) {
+            return YES;
+        }
+
+        // Check if we are connected to a manually enabled server
+        if ([manuallyEnabledServers count] > 0) {
+            for (NSDictionary *serverDictionary in manuallyEnabledServers) {
+                for (id key in serverDictionary) {
+                    NSString *manuallyEnabledServer = [serverDictionary valueForKey:key];
+                    if ([[manuallyEnabledServer lowercaseString] isEqualToString:serverAddress]) {
+                        return YES;
+                    }
                 }
             }
         }
