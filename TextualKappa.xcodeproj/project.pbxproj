@@ -28,12 +28,12 @@
 
 /* Begin PBXFileReference section */
 		561494E71BEFD6E0007805A9 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources; sourceTree = "<group>"; };
-		566B52411D88EAE40006B148 /* Headers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Headers; path = ../../Textual/Classes/Headers; sourceTree = "<group>"; };
 		56872D161BE95BD9008F70AF /* TextualKappa.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TextualKappa.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		56872D191BE95BD9008F70AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		568BE5691BEEB16A0081846B /* TPITextualKappa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPITextualKappa.h; sourceTree = "<group>"; };
 		568BE56A1BEEB16A0081846B /* TPITextualKappa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPITextualKappa.m; sourceTree = "<group>"; };
 		5697ED7C1D0A6BAE00E31E3F /* TPITextualKappaPrefs.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TPITextualKappaPrefs.xib; path = "TextualKappa/User Interface/TPITextualKappaPrefs.xib"; sourceTree = "<group>"; };
+		56CD5A59207984D900554EF7 /* Headers */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Headers; path = ../../../../../../Applications/Textual.app/Contents/Headers; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +66,7 @@
 		56872D181BE95BD9008F70AF /* TextualKappa */ = {
 			isa = PBXGroup;
 			children = (
-				566B52411D88EAE40006B148 /* Headers */,
+				56CD5A59207984D900554EF7 /* Headers */,
 				568BE5691BEEB16A0081846B /* TPITextualKappa.h */,
 				568BE56A1BEEB16A0081846B /* TPITextualKappa.m */,
 				56872D191BE95BD9008F70AF /* Info.plist */,
@@ -112,7 +112,7 @@
 		56872D0E1BE95BD8008F70AF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = sbine;
 				TargetAttributes = {
 					56872D151BE95BD9008F70AF = {
@@ -169,18 +169,26 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -214,18 +222,26 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -247,10 +263,10 @@
 		56872D1D1BE95BD9008F70AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "../Textual/Build Results/Release/Textual.app/Contents/MacOS/Textual";
+				BUNDLE_LOADER = /Applications/Textual.app/Contents/MacOS/Textual;
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"../Textual/Build Results/Release/Textual.app/Contents/Frameworks/**\"";
-				HEADER_SEARCH_PATHS = "\"../Textual/Build Results/Release/Textual.app/Contents/Headers/**\"";
+				FRAMEWORK_SEARCH_PATHS = "\"/Applications/Textual.app/Contents/Frameworks/**\"";
+				HEADER_SEARCH_PATHS = "\"/Applications/Textual.app/Contents/Headers/**\"";
 				INFOPLIST_FILE = TextualKappa/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = sbine.TextualKappa;
@@ -263,10 +279,10 @@
 		56872D1E1BE95BD9008F70AF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "../Textual/Build Results/Release/Textual.app/Contents/MacOS/Textual";
+				BUNDLE_LOADER = /Applications/Textual.app/Contents/MacOS/Textual;
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"../Textual/Build Results/Release/Textual.app/Contents/Frameworks/**\"";
-				HEADER_SEARCH_PATHS = "\"../Textual/Build Results/Release/Textual.app/Contents/Headers/**\"";
+				FRAMEWORK_SEARCH_PATHS = "\"/Applications/Textual.app/Contents/Frameworks/**\"";
+				HEADER_SEARCH_PATHS = "\"/Applications/Textual.app/Contents/Headers/**\"";
 				INFOPLIST_FILE = TextualKappa/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				PRODUCT_BUNDLE_IDENTIFIER = sbine.TextualKappa;
